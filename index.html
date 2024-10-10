@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat de Ação Climática</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #3f7e44; /* Cor da ODS 13 - Ação Climática */
+            color: white;
+        }
+        h1, h2 {
+            color: #ffd100; /* Cor amarela para destaque */
+        }
+        #chatbox {
+            height: 400px;
+            border: 1px solid #ccc;
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: white;
+            color: black;
+        }
+        #userInput {
+            width: 80%;
+            padding: 5px;
+        }
+        #sendButton {
+            padding: 5px 10px;
+            background-color: #ffd100;
+            border: none;
+            color: #3f7e44;
+            cursor: pointer;
+        }
+        .section {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat de Ação Climática</h1>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Digite sua mensagem...">
+    <button id="sendButton">Enviar</button>
+
+    <div class="section">
+        <h2>Curiosidades sobre a ODS 13 - Ação Climática</h2>
+        <ul>
+            <li>A ODS 13 faz parte dos 17 Objetivos de Desenvolvimento Sustentável estabelecidos pela ONU em 2015.</li>
+            <li>O objetivo principal é tomar medidas urgentes para combater a mudança do clima e seus impactos.</li>
+            <li>As metas incluem fortalecer a resiliência e a capacidade de adaptação a riscos relacionados ao clima e catástrofes naturais em todos os países.</li>
+            <li>Outra meta é integrar medidas da mudança do clima nas políticas, estratégias e planejamentos nacionais.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Sobre a ONU e as ODS</h2>
+        <ul>
+            <li>A ONU (Organização das Nações Unidas) foi fundada em 1945 após a Segunda Guerra Mundial.</li>
+            <li>As ODS foram adotadas por todos os Estados Membros da ONU em 2015 como um apelo universal à ação para acabar com a pobreza, proteger o planeta e garantir que todas as pessoas desfrutem de paz e prosperidade até 2030.</li>
+            <li>Há 17 ODS no total, abordando questões como pobreza, educação, igualdade de gênero, água limpa, energia sustentável e ação climática.</li>
+            <li>As ODS são integradas e reconhecem que ações em uma área afetarão resultados em outras, e que o desenvolvimento deve equilibrar sustentabilidade social, econômica e ambiental.</li>
+        </ul>
+    </div>
+
+    <script>
+        const API_KEY = '9553c33c1adf428dbcc6f3cc0e2cedd1';
+        const API_ENDPOINT = 'https://rafael-vasconcelossn.openai.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2023-03-15-preview';
+
+        const systemPrompt = {
+            "role": "system",
+            "content": "Instruções para o Chatbot Responder sobre Ação Climática\n\nEscopo e Limitação\nO chatbot deve responder exclusivamente sobre o objetivo \"Ação Climática\" das Metas de Desenvolvimento Sustentável da ONU. Isso inclui:\n\nDefinição e importância da ação climática\n\nCausas e efeitos das mudanças climáticas\n\nMedidas de mitigação e adaptação\n\nPolíticas e acordos internacionais\n\nAtividades individuais e comunitárias para combater a mudança climática\n\nTecnologias e inovações verdes\n\nFatos e estatísticas relevantes\n\nDefinição e Importância\nExplique que a ação climática é um dos 17 Objetivos de Desenvolvimento Sustentável da ONU e visa combater as mudanças climáticas e seus impactos. É crucial para a sustentabilidade do nosso planeta e para garantir um futuro saudável para as próximas gerações.\n\nCausas e Efeitos\nDescreva as principais causas das mudanças climáticas, como a emissão de gases de efeito estufa (CO2, metano, etc.), desmatamento e poluição. Fale também sobre os efeitos, como o aumento das temperaturas globais, derretimento das calotas polares, elevação do nível do mar e eventos climáticos extremos.\n\nMedidas de Mitigação e Adaptação\nExplique as ações que podem ser tomadas para reduzir os impactos das mudanças climáticas:\n\nMitigação: Reduzir emissões de gases de efeito estufa, utilizar energias renováveis, aumentar a eficiência energética.\n\nAdaptação: Implementar sistemas de alerta precoce, construir infraestruturas resilientes, proteger ecossistemas.\n\nPolíticas e Acordos Internacionais\nMencione os principais acordos e políticas climáticas, como o Acordo de Paris, que visa manter o aumento da temperatura global abaixo de 2°C, e as Conferências das Partes (COP) da ONU, que reúnem líderes mundiais para discutir ações climáticas.\n\nAtividades Individuais e Comunitárias\nIncentive ações individuais e comunitárias, como reduzir o consumo de energia, optar por transporte sustentável, plantar árvores, reduzir o desperdício de alimentos e reciclar.\n\nTecnologias e Inovações Verdes\nFale sobre as tecnologias e inovações que ajudam a combater a mudança climática, como painéis solares, turbinas eólicas, carros elétricos e práticas agrícolas sustentáveis.\n\nFatos e Estatísticas\nInclua dados e estatísticas relevantes para contextualizar a gravidade e a urgência da ação climática. Por exemplo, mencione que a última década foi a mais quente já registrada e que a concentração de CO2 na atmosfera atingiu níveis sem precedentes.\n\nResponsabilidades\nPrecisão: Verifique todas as informações antes de responder.\n\nImparcialidade: Evite partidarismo ou vieses.\n\nEducação: Busque informar e conscientizar, promovendo um entendimento claro dos desafios e soluções relacionados à ação climática."
+        };
+
+        let conversationHistory = [systemPrompt];
+
+        async function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const chatbox = document.getElementById('chatbox');
+
+            if (userInput.value.trim() === '') return;
+
+            // Adiciona a mensagem do usuário ao chatbox
+            chatbox.innerHTML += `<p><strong>Você:</strong> ${userInput.value}</p>`;
+
+            // Adiciona a mensagem do usuário ao histórico da conversa
+            conversationHistory.push({
+                "role": "user",
+                "content": userInput.value
+            });
+
+            // Limpa o input do usuário
+            userInput.value = '';
+
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'api-key': API_KEY
+                    },
+                    body: JSON.stringify({
+                        messages: conversationHistory,
+                        max_tokens: 800,
+                        temperature: 0.7,
+                        top_p: 0.95,
+                        frequency_penalty: 0,
+                        presence_penalty: 0
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const botReply = data.choices[0].message.content;
+
+                // Adiciona a resposta do bot ao chatbox
+                chatbox.innerHTML += `<p><strong>Bot:</strong> ${botReply}</p>`;
+
+                // Adiciona a resposta do bot ao histórico da conversa
+                conversationHistory.push({
+                    "role": "assistant",
+                    "content": botReply
+                });
+
+                // Limita o histórico da conversa para as últimas 10 mensagens
+                if (conversationHistory.length > 11) { // 11 porque inclui o systemPrompt
+                    conversationHistory = [
+                        systemPrompt,
+                        ...conversationHistory.slice(-10)
+                    ];
+                }
+
+                // Rola o chatbox para baixo
+                chatbox.scrollTop = chatbox.scrollHeight;
+            } catch (error) {
+                console.error('Erro:', error);
+                chatbox.innerHTML += `<p><strong>Erro:</strong> Não foi possível obter uma resposta. Por favor, tente novamente.</p>`;
+            }
+        }
+
+        document.getElementById('sendButton').addEventListener('click', sendMessage);
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
